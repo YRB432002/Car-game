@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Racing Game</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <style type="text/css">
+        /* add the style now to design the game */
+        body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            background: lightgreen;
+            font-family: 'Josefin Sans'sans-serif;
+            background-position: center;
+        }
+
+        #score-div {
+            position: absolute;
+            margin-top: 20%;
+            margin-left: 10%;
+            font-size: 25px;
+            background: white;
+            color: #454545;
+            padding: 15px;
+            -webkit-box-shadow: 4px 4px 4px 1px #808080;
+            box-shadow: 4px 4px 4px 1px #808080;
+
+        }
+
+        #score-div p {
+            height: 20px;
+
+        }
+
+        /* start styling the road */
+        #container {
+            width: 40%;
+            height: 100vh;
+            left: 35%;
+            background: #333;
+            overflow: hidden;
+            position: relative;
+
+        }
+
+        .line {
+            width: 4%;
+            height: 30vh;
+            background: rgba(255, 255, 255, .8);
+            position: absolute;
+            margin-left: 48%;
+
+        }
+
+        /* style the lines of road */
+        #line-1 {
+            top: -150px;
+        }
+
+        #line-2 {
+            top: 150px;
+        }
+
+        #line-3 {
+            top: 450px;
+        }
+
+        .car {
+            position: absolute;
+            width: 50px;
+            height: 80px;
+            border-radius: 5px;
+            box-shadow: 3px 3px 3px blink;
+            -webkit-box-shadow: 3px 3px 3xp blink;
+            /* background-image: url(red.png); */
+            /* background-size: cover; */
+            /* background-color: black; */
+        }
+
+        #car {
+            bottom: 120px;
+            left: 60%;
+            background-color: red;
+        }
+
+        .f-glass,
+        .b-glass {
+            width: 30px;
+            height: 20%;
+            background: #454545;
+            position: absolute;
+            margin-left: 20%;
+        }
+
+        .f-glass {
+            top: 15px;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .b-glass {
+            bottom: 15px;
+            border-radius: 0 0 5px 5px;
+        }
+
+        .f-light-l,
+        .f-light-r {
+            position: absolute;
+            width: 20%;
+            height: 10%;
+            background: #efefef;
+            top: -6%;
+            margin-left: 10%;
+            border-radius: 5px 5px 0 0;
+
+
+        }
+
+        .f-light-r {
+            margin-left: 70%;
+        }
+
+        .f-tyre-l,
+        .f-tyre-r,
+        .b-tyre-l,
+        .b-tyre-r {
+            position: absolute;
+            height: 20%;
+            width: 10%;
+            background: grey;
+        }
+
+        .f-tyre-l {
+            top: 20%;
+            left: -10%;
+            border-radius: 5px 5px 0 0;
+
+        }
+
+        .f-tyre-r {
+            top: 20%;
+            left: 100%;
+            border-radius: 0 5px 5px 5px;
+        }
+
+        .b-tyre-r {
+            bottom: 20%;
+            left: 100%;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .b-tyre-l {
+            bottom: 20%;
+            left: -10%;
+            border-radius: 5px 5px 0 0;
+        }
+
+        #car-1 {
+            top: -100%;
+            left: 60%;
+            background: orange;
+        }
+
+        #car-2 {
+            top: -200%;
+            left: 40%;
+            background: blue;
+        }
+
+        #car-3 {
+            top: -350%;
+            left: 5%;
+            background: purple;
+        }
+
+        #restart-div {
+            position: absolute;
+            top: 0%;
+            left: 0%;
+            width: 100%;
+            height: 100vh;
+            background: #292929;
+            line-height: 100vh;
+            display: none;
+            /* margin: 140px; */
+        }
+
+        #restart {
+            display: block;
+            width: 50%;
+            height: 80px;
+            background: #8a64ff;
+            color: #fff;
+            font-size: 25px;
+            border: none;
+            outline: none;
+            margin: 140px;
+            margin-left: 20%;
+            margin-right: 40%;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Josefin Sans', sans-serif;
+            font-weight: 300;
+        }
+
+        html {
+            font-size: 62.5%;
+        }
+
+        .main-div {
+            width: 100vw;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            background-color: black;
+        }
+
+        .inner-div {
+            width: 37vw;
+            background-color: teal;
+            padding: 3rem 10px;
+            border-radius: 1rem;
+            box-shadow: 0 1rem 1rem -0.7rem rgba(0, 0, 0, 0.4);
+            transform: scale(0);
+            position: absolute;
+            top: 219px;
+            /* z-index: 114; */
+            right: 4%;
+        }
+
+        .inner-div h2 {
+            font-size: 3.5rem;
+            font-weight: 400;
+            margin: 1rem 0 4rem 0;
+        }
+
+        .inner-div li {
+            font-size: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        input {
+            cursor: pointer;
+        }
+
+        #submit,
+        .btn {
+            padding: 1rem 3rem;
+            outline: none;
+            font-size: 2rem;
+            font-size: 400;
+            display: block;
+            margin: auto;
+            border: none;
+            border-radius: 1rem;
+            text-transform: uppercase;
+            color: #fff;
+            background-color: cyan;
+            margin-top: 4rem;
+
+        }
+
+        .popup.active .overlay {
+            display: block;
+        }
+
+        .popup.active .inner-div {
+            transition: all 300ms ease-in-out;
+            transform: scale(1);
+        }
+    </style>
+</head>
+
+<body>
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:400,600" rel="stylesheet">
+    <div id="score-div">
+        <span>Score :</span>
+        <span id="score">0</span>
+    </div>
+    <div id="container">
+        <!-- START TO MAKE ROAD -->
+        <div class="line" id="line-1"></div>
+        <div class="line" id="line-2"></div>
+        <div class="line" id="line-3"></div>
+
+        <div class="car" id="car">
+            <!-- DESIGNING CAR'S PART (tyres,glass light etc) -->
+            <div class="f-glass"></div>
+            <div class="f-light-l"></div>
+            <div class="f-light-r"></div>
+            <div class="f-tyre-l"></div>
+            <div class="f-tyre-r"></div>
+            <div class="b-tyre-l"></div>
+            <div class="b-tyre-r"></div>
+            <div class="b-glass"></div>
+        </div>
+        <div class="car" id="car-1">
+            <!-- DESIGNING CAR'S PART (tyres,glass light etc) -->
+            <div class="f-glass"></div>
+            <div class="f-light-l"></div>
+            <div class="f-light-r"></div>
+            <div class="f-tyre-l"></div>
+            <div class="f-tyre-r"></div>
+            <div class="b-tyre-l"></div>
+            <div class="b-tyre-r"></div>
+            <div class="b-glass"></div>
+        </div>
+        <div class="car" id="car-2">
+            <!-- DESIGNING CAR'S PART (tyres,glass light etc) -->
+            <div class="f-glass"></div>
+            <div class="f-light-l"></div>
+            <div class="f-light-r"></div>
+            <div class="f-tyre-l"></div>
+            <div class="f-tyre-r"></div>
+            <div class="b-tyre-l"></div>
+            <div class="b-tyre-r"></div>
+            <div class="b-glass"></div>
+        </div>
+        <div class="car" id="car-3">
+            <!-- DESIGNING CAR'S PART (tyres,glass light etc) -->
+            <div class="f-glass"></div>
+            <div class="f-light-l"></div>
+            <div class="f-light-r"></div>
+            <div class="f-tyre-l"></div>
+            <div class="f-tyre-r"></div>
+            <div class="b-tyre-l"></div>
+            <div class="b-tyre-r"></div>
+            <div class="b-glass"></div>
+        </div>
+        <div id="restart-div">
+            <button id="retsart">
+                click to retsart
+            </button>
+        </div>
+        <div class="main-div">
+            <div class="popup" id="popup">
+                <div class="overlay"></div>
+                <div class="inner-div" id="popup-1">
+                    <div class="close-btn" onclick="togglePopup()">&times;</div>
+                    <h2 class="question">Question Comes Here</h2>
+                    <ul style="list-style: none;">
+                        <li>
+                            <input type="radio" name="answer" id="ans1" class="answer">
+                            <label for="ans1" id="option1">Answer 1</label>
+                        </li>
+                        <li>
+                            <input type="radio" name="answer" id="ans2" class="answer">
+                            <label for="ans2" id="option2">Answer 2</label>
+                        </li>
+                        <li>
+                            <input type="radio" name="answer" id="ans3" class="answer">
+                            <label for="ans3" id="option3">Answer 3</label>
+                        </li>
+                        <li>
+                            <input type="radio" name="answer" id="ans4" class="answer">
+                            <label for="ans4" id="option4">Answer 4</label>
+                        </li>
+                    </ul>
+                    <button id="submit">Submit</button>
+                    <!-- <div id="showScore" class="scoreArea"></div> -->
+                </div>
+            </div>
+        </div>        
+
+
+
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+                <script type="text/javascript">
+                    $(function () {
+                        //"use strict";
+                        var anim_id;
+                        //saving the DOM objects in variable
+                        var container = $('#container'),
+                            line = $('#line'),
+                            line_1 = $('#line-1'),
+                            line_2 = $('#line-2'),
+                            line_3 = $('#line-3'),
+                            car = $('#car'),
+                            car_1 = $('#car-1'),
+                            car_2 = $('#car-2'),
+                            car_3 = $('#car-3'),
+                            restart_div = $("#restart-div"),
+                            restart_btn = $("#restart"),
+                            score = $('#score');
+                        //saving some ititial settings
+
+                        var container_left = parseInt(container.css('left')),
+                            container_width = parseInt(container.css('width')),
+                            container_height = parseInt(container.css('height')),
+                            car_width = parseInt(car.css('width')),
+                            car_height = parseInt(car.css('height'));
+
+                        //some other variables
+                        var game_over = false,
+                            score_counter = 1,
+                            car_speed = 2,
+                            line_speed = 5;
+
+                        //========start game coding now
+                        $(window).on('keydown', function (e) {
+                            var key = e.which; //defining the key to press and move
+                            if (game_over === false) {
+                                if (key == 37) {
+                                    if (parseInt(car.css('right')) < (container_width - car_width - 20))
+                                        car.animate({
+                                            left: "-=20px"
+                                        }, 30);
+                                }
+                                else if (key == 39) {
+                                    if (parseInt(car.css('left')) < (container_width - car_width - 20))
+                                        car.animate({
+                                            left: "+=20px"
+                                        }, 30);
+                                }
+                                else if (key == 38) {
+                                    if (parseInt(car.css('bottom')) < (container_width - car_width - 20))
+                                        car.animate({
+                                            bottom: "+=20px"
+                                        }, 30);
+                                }
+                                else if (key == 40) {
+                                    if (parseInt(car.css('top')) < (container_width - car_width - 20))
+                                        car.animate({
+                                            bottom: "-=20px"
+                                        }, 40);
+                                }
+                                //..............bracket issue.....................................
+
+
+                                else {
+                                    if (key == 13) {
+                                        window.location.reload(true);
+                                    }
+                                }
+                            }
+                        });
+                        var anim_id = requestAnimationFrame(repeat);
+                        function repeat() {
+                            console.log('repeat function');
+                            if (game_over == false) {
+                                score_counter++;
+                                if (score_counter % 20 == 0) {
+                                    score.text(parseInt(score.text()) + 1)
+                                }
+                                /*if (score_counter % 300 == 0) {
+                                    car_speed++;
+                                    line_speed++; 
+                                }*/
+                                if (collapsion(car, car_1) || collapsion(car, car_2) || collapsion(car, car_3)) {
+                                    stop_game();
+                                    console.log(game_over);
+                                }
+                                
+                                
+                                car_down(car_1);
+                                car_down(car_2);
+                                car_down(car_3);
+
+
+                                line_down(line_1);
+                                line_down(line_2);
+                                line_down(line_3);
+                                if (score_counter %1000==0 && score_counter%1000 > 0) {
+                                    loadQuestion();
+                                    console.log(parseInt(score.text()));
+                                }
+                                else{
+                                    anim_id = requestAnimationFrame(repeat);
+                                }
+                                
+
+                            }
+                        }
+                        function car_down(car) {
+                            var current_top = parseInt(car.css('top'));
+                            if (current_top > (container.height() + 50)) {
+                                current_top = -60;
+                                var car_left = Math.floor(Math.random() * (container_width - car_width));
+                                car.css('left', car_left);
+                            }
+                            car.css('top', current_top + car_speed);
+                        }
+                        function line_down(line) {
+                            var l_current_top = parseInt(line.css('top'));
+                            if (l_current_top > (container_height + 150)) {
+                                l_current_top = -300;
+                            }
+                            line.css('top', l_current_top + line_speed);
+                        }
+                        function stop_game() {
+                            game_over = true;
+                            cancelAnimationFrame(anim_id);
+                            restart_div.slideDown();
+                            restart_btn.focus();
+                        }
+                        restart_div.click(function () {
+                            window.location.reload(true)
+                        });
+
+
+                        //============= finish the game coding now
+                        function collapsion(elem1, elem2) {
+                            var x1 = elem1.offset().left,
+                                y1 = elem1.offset().top,
+                                x2 = elem2.offset().left,
+                                y2 = elem2.offset().top,
+                                h1 = elem1.outerHeight(),
+                                w1 = elem1.outerWidth(),
+                                h2 = elem2.outerHeight(),
+                                w2 = elem2.outerWidth(),
+                                b1 = y1 + h1,
+                                r1 = x1 + w1,
+                                b2 = y2 + h2,
+                                r2 = x2 + w2;
+                            if (b1 < y2 || y1 > b2 || r1 < x2 || x1 > r2) {
+                                return false;
+                            };
+                            return true;
+                        }
+
+
+
+
+
+                        // ..........................Questionare code........................................................
+                        const quizDB = [
+                            {
+                                question: "Q1. What is the full form of HTML?",
+                                a: "Heloo To My Land",
+                                b: "Hey Text Markup Language",
+                                c: "Hyper Text Makeup Language",
+                                d: "Hyper Text Markup Language",
+                                ans: "ans4"
+                            },
+                            {
+                                question: "Q2. What is the full form of CSS?",
+                                a: "Cascading Style Sheets",
+                                b: "Cascading Style Sheeps",
+                                c: "Cartoon Style Sheets",
+                                d: "Cascading Super Sheets",
+                                ans: "ans1"
+                            },
+                            {
+                                question: "Q3. What is the full form of WWW?",
+                                a: "World Wide Wheel",
+                                b: "World Wide Web",
+                                c: "World Wonder Wipe",
+                                d: "World Weep Web",
+                                ans: "ans2"
+                            },
+                            {
+                                question: "Q4. What is the full form of HTTP?",
+                                a: "Hypertext Tranfer Product",
+                                b: "Hypertext Transfer Protocol",
+                                c: "Hey Transfer Protocol",
+                                d: "Hypertext Test Protocol",
+                                ans: "ans2"
+                            },
+                            {
+                                question: "Q5. What is the full form of JS?",
+                                a: "JavaScript",
+                                b: "JavaSuper",
+                                c: "JustScript",
+                                d: "JordenShoes",
+                                ans: "ans1"
+                            }
+                        ];
+
+                        const question = document.querySelector('.question');
+                        const option1 = document.querySelector('#option1');
+                        const option2 = document.querySelector('#option2');
+                        const option3 = document.querySelector('#option3');
+                        const option4 = document.querySelector('#option4');
+                        const submit = document.querySelector('#submit');
+
+                        const answers = document.querySelectorAll('.answers');
+
+                        let questionCount = 0;
+                        // .................................................SPEED VARIABLE.............................................
+                        //let speed = 2;
+
+                        const loadQuestion = () => {
+
+                            const questionList = quizDB[questionCount];
+
+                            question.innerText = questionList.question;
+
+                            option1.innerHTML = questionList.a;
+                            option2.innerHTML = questionList.b;
+                            option3.innerHTML = questionList.c;
+                            option4.innerHTML = questionList.d;
+
+                            togglePopup();
+                        }
+
+                        //loadQuestion();
+
+                        const getCheckAnswer = () => {
+                            let answer;
+
+                            answers.forEach((currAnsElem) => {
+                                if (currAnsElem.checked) {
+                                    answer = currAnsElem.id;
+                                }
+
+
+                            });
+                            return answer;
+
+                        };
+
+                        //.............................. FUNCTION TO CHECK CORRECT ANS AND ALTER SPEED..............................
+
+                        submit.addEventListener('click', () => {
+                            const checkedAnswer = getCheckAnswer();
+
+                            if (checkedAnswer == quizDB[questionCount].ans) {
+                                car_speed++;
+                            };
+                            anim_id = requestAnimationFrame(repeat);
+                            
+                            questionCount++;
+
+                            if (questionCount < quizDB.length) {
+                                loadQuestion();
+                            }
+                        })
+
+                        function togglePopup() {
+                            document.getElementById("popup").classList.toggle("active");
+                        }
+
+                    });
+
+                </script>
+</body>
+
+</html>
